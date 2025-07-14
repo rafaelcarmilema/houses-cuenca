@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dream Properties</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #f0f2f5;
+      color: #333;
+    }
+    .lang-switcher {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1000;
+    }
+    .lang-switcher a {
+      margin-left: 0.5rem;
+      text-decoration: none;
+      font-size: 1.2rem;
+    }
+    header {
+      background: linear-gradient(to right, #004080, #0066cc);
+      color: white;
+      padding: 3rem 1rem;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+      position: relative;
+    }
+    header h1 { margin: 0; font-size: 3rem; }
+    header p { font-size: 1.3rem; margin-top: 0.5rem; }
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .listing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+    }
+    .card img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+    }
+    .card-body { padding: 1.5rem; }
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem;
+      color: #004080;
+    }
+    .card-body p {
+      margin: 0.3rem 0;
+      font-size: 1rem;
+    }
+    .card-price {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #0066cc;
+      margin-top: 1rem;
+    }
+    footer {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      background: #003366;
+      color: white;
+      margin-top: 4rem;
+    }
+    footer p { margin: 0; font-size: 0.95rem; }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.7);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 3rem auto;
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 1000px;
+      width: 90%;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      overflow-y: auto;
+      max-height: 90vh;
+    }
+    .close {
+      color: #aaa;
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .modal-gallery {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .modal-gallery img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    .features {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    .features div {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      background: #f1f5fb;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+    }
+    .contact-section {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    .contact-section a {
+      display: inline-block;
+      padding: 0.75rem 1.25rem;
+      background-color: #25D366;
+      color: white;
+      font-weight: 600;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+    .contact-section a:hover {
+      background-color: #1ebe5d;
+    }
+  </style>
+</head>
+<body>
+  <div class="lang-switcher">
+    <a href="/houses-cuenca/" style="color:white;"><img src="https://flagcdn.com/us.svg" width="24" alt="English"></a>
+    <a href="/houses-cuenca/es/" style="color:white;"><img src="https://flagcdn.com/es.svg" width="24" alt="Español"></a>
+  </div>
+  <header>
+    <h1>Dream Properties</h1>
+    <p>Find your perfect home or land</p>
+  </header>
+  <div class="container">
+    <div class="listing-grid" id="listings"></div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Dream Properties. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const listings = [
+      {
+        id: 'modal1',
+        title: 'Cozy Family House',
+        price: '$250,000',
+        image: 'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=800&q=80',
+        images: [
+          'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1000&q=80',
+          'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1000&q=80',
+          'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=1000&q=80'
+        ],
+        beds: 3,
+        baths: 2,
+        size: '1800 sqft',
+        description: 'This lovely 3-bedroom house features a spacious living room, updated kitchen, and a private backyard. Located in a quiet neighborhood close to schools and parks.'
+      },
+      {
+        id: 'modal2',
+        title: 'Modern Urban Apartment',
+        price: '$450,000',
+        image: 'https://images.unsplash.com/photo-1489370321024-e0410ad08da4?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?auto=format&fit=crop&w=800&q=80',
+        images: [
+          'https://images.unsplash.com/photo-1560448071-496bf63d45f4?auto=format&fit=crop&w=1000&q=80',
+          'https://images.unsplash.com/photo-1494522339731-3f3b329bc8f7?auto=format&fit=crop&w=1000&q=80',
+          'https://images.unsplash.com/photo-1501183638714-ec0c2e29f010?auto=format&fit=crop&w=1000&q=80'
+        ],
+        beds: 2,
+        baths: 2,
+        size: '1200 sqft',
+        description: 'A luxurious downtown apartment with skyline views, high ceilings, modern finishes, and walkable to shops and restaurants.'
+      },
+      {
+        id: 'modal3',
+        title: 'Countryside Land Plot',
+        price: '$95,000',
+        image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
+        images: [
+          'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1000&q=80',
+          'https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1000&q=80',
+          'https://images.unsplash.com/photo-1441716841578-0b4e8e6f3e23?auto=format&fit=crop&w=1000&q=80'
+        ],
+        beds: 0,
+        baths: 0,
+        size: '1 acre',
+        description: 'Spacious land in the countryside. Peaceful and perfect for building your future home or ranch. Utilities nearby.'
+      },
+      {
+        id: 'modal4',
+        title: 'Luxury Villa with Pool',
+        price: '$1,200,000',
+        image: 'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=800&q=80',
+        images: [
+          'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1000&q=80',
+          'https://images.unsplash.com/photo-1501183638714-ec0c2e29f010?auto=format&fit=crop&w=1000&q=80',
+          'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=1000&q=80'
+        ],
+        beds: 5,
+        baths: 4,
+        size: '4500 sqft',
+        description: 'Stunning villa with modern amenities, an infinity pool, and ocean views. Gated community with full security and luxury clubhouse.'
+      },
+      {
+        id: 'modal5',
+        title: 'Downtown Loft',
+        price: '$550,000',
+        image: 'https://images.unsplash.com/photo-1619216083420-6e54b895f730?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?auto=format&fit=crop&w=800&q=80',
+        images: [
+          'https://images.unsplash.com/photo-1464965911861-746a04b4bca1?auto=format&fit=crop&w=1000&q=80',
+          'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1000&q=80'
+        ],
+        beds: 1,
+        baths: 1,
+        size: '1000 sqft',
+        description: 'Trendy open-concept loft in the heart of downtown. Exposed brick, high ceilings, and large windows. Walkable to entertainment and dining.'
+      },
+      {
+        id: 'modal6',
+        title: 'Suburban Starter Home',
+        price: '$180,000',
+        image: 'https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?q=80&w=725&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?auto=format&fit=crop&w=800&q=80',
+        images: [
+          'https://images.unsplash.com/photo-1501183638714-ec0c2e29f010?auto=format&fit=crop&w=1000&q=80',
+          'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1000&q=80'
+        ],
+        beds: 3,
+        baths: 1,
+        size: '1300 sqft',
+        description: 'Charming starter home in a quiet suburb. Fenced yard, detached garage, and great potential for upgrades.'
+      }
+    ];
+
+    const listingsContainer = document.getElementById('listings');
+
+    listings.forEach(({ id, title, price, image, beds, baths, size }) => {
+      listingsContainer.innerHTML += `
+        <div class="card" onclick="openModal('${id}')">
+          <img src="${image}" alt="${title}" />
+          <div class="card-body">
+            <h2 class="card-title">${title}</h2>
+            <p>${beds} Bed • ${baths} Bath • ${size}</p>
+            <p class="card-price">${price}</p>
+          </div>
+        </div>
+      `;
+    });
+
+    listings.forEach(({ id, title, images, beds, baths, size, price, description }) => {
+      const modal = document.createElement('div');
+      modal.id = id;
+      modal.className = 'modal';
+      modal.innerHTML = `
+        <div class="modal-content">
+          <span class="close" onclick="closeModal('${id}')">&times;</span>
+          <div class="modal-gallery">
+            ${images.map(img => `<img src="${img}" />`).join('')}
+          </div>
+          <h2>${title}</h2>
+          <div class="features">
+            <div><i class="fas fa-bed"></i> ${beds} Bedrooms</div>
+            <div><i class="fas fa-bath"></i> ${baths} Bathrooms</div>
+            <div><i class="fas fa-ruler-combined"></i> ${size}</div>
+          </div>
+          <p>${description}</p>
+          <p><strong>Price:</strong> ${price}</p>
+          <div class="contact-section">
+            <p><strong>Contact Us:</strong></p>
+            <a href="https://wa.me/1234567890" target="_blank"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</a>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    });
+
+    function openModal(id) {
+      document.getElementById(id).style.display = 'block';
+    }
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>
